@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        let timeLeft = 60;  // 60 seconds timer
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').innerText = 'Time is up!';
+                    document.getElementById('guess-button').disabled = true;
+                    // Submit form to handle game over due to timeout
+                    document.getElementById('timeout-form').submit();
+                } else {
+                    document.getElementById('timer').innerText = `Time left: ${timeLeft} seconds`;
+                    timeLeft -= 1;
+                }
+            }, 1000);
+        }
+
+        function sendGuess(event) {
+            event.preventDefault();
+            const guessInput = document.getElementById('guess-input');
+            const guess = guessInput.value;
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '{{ url_for('guess') }}', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    document.getElementById('word').innerText = response.word;
+                    document.getElementById('attempts').innerText = response.attempts;
+                    document.getElementById('guessed').innerText = response.guessed;
+                    document.getElementById('score').innerText = response.score;
+                    document.getElementById('hangman-image').src = response.hangman_image;
+                    if (response.error_message) {
+                        document.getElementById('error-message').innerText = response.error_message;
+                    } else {
+                        document.getElementById('error-message').innerText = '';
+                    }
+                    if (response.game_over) {
+                        document.getElementById('guess-button').disabled = true;
+                        document.getElementById('timeout-form').submit();
+                    }
+                }
+            };
+            xhr.send('letter=' + guess);
+            guessInput.value = '';
+        }
+
+        window.onload = startTimer;
+    </script>
+</head>
+<body>
+    <div class="container text-center mt-5">
+        <h1>Hangman Game</h1>
+        <p>Player: <span id="player">{{ player_name }}</span></p>
+        <p>Word: <span id="word" class="display-word">{{ word }}</span></p>
+        <p>Remaining Attempts: <span id="attempts">{{ attempts }}</span></p>
+        <p>Guessed Letters: <span id="guessed">{{ guessed }}</span></p>
+        <p>Score: <span id="score">{{ score }}</span></p>
+        <p id="timer">Time left: 60 seconds</p>
+        <form id="guess-form" onsubmit="sendGuess(event)" class="mt-3">
+            <input type="text" name="letter" id="guess-input" class="form-control mb-3" placeholder="Enter a letter" required>
+            <button type="submit" id="guess-button" class="btn btn-success">Guess</button>
+        </form>
+        <form id="timeout-form" action="{{ url_for('timeout') }}" method="POST">
+            <!-- Hidden form to handle timeout -->
+        </form>
+        <p id="error-message" class="text-danger mt-3">{{ error_message }}</p>
+        <p id="success-message" class="text-success mt-3">{{ success_message }}</p>
+        <img id="hangman-image" class="img-fluid mt-4" src="{{ hangman_image }}" alt="Hangman Image">
+    </div>
+</body>
+</html>
