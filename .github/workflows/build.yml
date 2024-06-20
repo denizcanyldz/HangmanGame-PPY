@@ -20,12 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-        working-directory: Game
 
       - name: Run tests
         run: pytest tests/test_hangman.py
-        working-directory: Game
 
       - name: Build Docker image
         run: docker build -t s28330-hangmangame:latest .
-        working-directory: Game
