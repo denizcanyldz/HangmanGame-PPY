@@ -101,7 +101,7 @@ HangmanGame-PPY/
 │   ├── css/
 │   │   └── styles.css
 │   ├── images/
-│   │   └── (your images here)
+│   │   └── (my image files)
 └── tests/
     └── test_hangman.py
 
