@@ -46,3 +46,62 @@
    ```bash
    git clone https://github.com/yourusername/HangmanGame-PPY.git
    cd HangmanGame-PPY
+
+2. **Set up a virtual environment and install dependencies:**
+   ```bash
+   python3.10 -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   pip install -r requirements.txt
+
+3. **Configure MongoDB:**
+   Update the MONGODB_URL in app.py with your MongoDB connection string.
+   ```bash
+   MONGODB_URL = "your_mongodb_connection_string"
+
+4. **Run the application:**
+   ```bash
+   python app.py
+
+### Using Docker
+
+1. **Build the Docker image:**
+   ```bash
+   docker build -t hangman-game .
+
+2. **Run the Docker container:**
+   ```bash
+   docker run -p 5000:5000 hangman-game
+
+Access the game at http://localhost:5000.
+
+### How to Play
+* Navigate to http://localhost:5000 in your web browser.
+* Enter your name (minimum 3 characters, letters and numbers only) and select a topic.
+* Start guessing letters to complete the word before the timer runs out.
+* Try to guess the word with as few incorrect guesses as possible to achieve a high score.
+* Check your score and see if you made it to the leaderboard.
+
+### Project Structure
+```bash
+HangmanGame-PPY/
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── Dockerfile
+├── requirements.txt
+├── app.py
+├── hangman_game.py
+├── read_topics.py
+├── templates/
+│   ├── index.html
+│   ├── game.html
+│   ├── leaderboard.html
+│   └── game_over.html
+├── static/
+│   ├── css/
+│   │   └── styles.css
+│   ├── images/
+│   │   └── (your images here)
+└── tests/
+    └── test_hangman.py
+
